@@ -23,7 +23,7 @@ type LineCalc struct {
 	VerticalMargin   float64
 	HorizontalMargin float64
 	MaxWidth         float64
-	maxHeight        float64
+	MaxHeight        float64
 }
 
 type Line struct {
@@ -78,7 +78,7 @@ func CalculateLineData(boldWidth, width float64) (*LineCalc, error) {
 		VerticalMargin:   verticalMargin,
 		HorizontalMargin: horizontalMargin,
 		MaxWidth:         WIDTH - verticalMargin,
-		maxHeight:        HEIGHT - horizontalMargin,
+		MaxHeight:        HEIGHT - horizontalMargin,
 	}, nil
 }
 
@@ -89,7 +89,7 @@ func DrawVerticalLines(pdf *gofpdf.Fpdf, data *LineCalc) {
 		InitMargin: data.VerticalMargin,
 		LineMargin: data.HorizontalMargin,
 		Max:        data.MaxWidth,
-		LineMax:    data.maxHeight,
+		LineMax:    data.MaxHeight,
 	})
 }
 
@@ -99,7 +99,7 @@ func DrawHorizontalLines(pdf *gofpdf.Fpdf, data *LineCalc) {
 		Width:      data.Width,
 		InitMargin: data.HorizontalMargin,
 		LineMargin: data.VerticalMargin,
-		Max:        data.maxHeight,
+		Max:        data.MaxHeight,
 		LineMax:    data.MaxWidth,
 	})
 }
