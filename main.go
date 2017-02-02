@@ -109,6 +109,7 @@ func DrawLines(pdf *gofpdf.Fpdf, lineType int, data *Line) error {
 
 	for i := data.InitMargin; i <= data.Max; i += data.Width {
 		pdf.SetLineWidth(LINE)
+
 		if math.Mod(j, data.BoldWidth) == 0 {
 			pdf.SetLineWidth(LINE_BOLD)
 		}
@@ -135,10 +136,10 @@ func CalculateMargin(width, total, margin float64) (float64, error) {
 	}
 
 	newMargin := margin + (rest / 2)
+
 	if rest = math.Mod(total-(2*newMargin), width); rest == 0 {
 		return newMargin, nil
 	}
 
 	return 0., errors.New("Invalid Margin")
-
 }
