@@ -1,21 +1,39 @@
 package main
 
 import (
+	"errors"
 	"github.com/jung-kurt/gofpdf"
 	"math"
-	"errors"
 )
 
 const (
-	WIDTH  = 210
-	HEIGHT = 297
-	MARGIN_VERTICAL = 5.
+	WIDTH             = 210
+	HEIGHT            = 297
+	MARGIN_VERTICAL   = 5.
 	MARGIN_HORIZONTAL = 8.
-	LINE_BOLD = 0.5
-	LINE = 0.2
-	VERTICAL = iota
+	LINE_BOLD         = 0.5
+	LINE              = 0.2
+	VERTICAL          = iota
 	HORIZONTAL
 )
+
+type LineCalc struct {
+	BoldWidth        float64
+	Width            float64
+	VerticalMargin   float64
+	HorizontalMargin float64
+	MaxWidth         float64
+	maxHeight        float64
+}
+
+type Line struct {
+	BoldWidth  float64
+	Width      float64
+	InitMargin float64
+	LineMargin float64
+	Max        float64
+	LineMax    float64
+}
 
 func main() {
 	boldWidth := 20.
@@ -41,24 +59,6 @@ func main() {
 	}
 }
 
-type LineCalc struct {
-	BoldWidth float64
-	Width float64
-	VerticalMargin float64
-	HorizontalMargin float64
-	MaxWidth float64
-	maxHeight float64
-}
-
-type Line struct {
-	BoldWidth float64
-	Width float64
-	InitMargin float64
-	LineMargin float64
-	Max float64
-	LineMax float64
-}
-
 func CalculateLineData(boldWidth, width float64) (*LineCalc, error) {
 	verticalMargin, err := CalculateMargin(boldWidth, WIDTH, MARGIN_VERTICAL)
 
@@ -73,34 +73,34 @@ func CalculateLineData(boldWidth, width float64) (*LineCalc, error) {
 	}
 
 	return &LineCalc{
-		BoldWidth: boldWidth,
-		Width: width,
-		VerticalMargin: verticalMargin,
+		BoldWidth:        boldWidth,
+		Width:            width,
+		VerticalMargin:   verticalMargin,
 		HorizontalMargin: horizontalMargin,
-		MaxWidth: WIDTH - verticalMargin,
-		maxHeight: HEIGHT - horizontalMargin,
+		MaxWidth:         WIDTH - verticalMargin,
+		maxHeight:        HEIGHT - horizontalMargin,
 	}, nil
 }
 
 func DrawVerticalLines(pdf *gofpdf.Fpdf, data *LineCalc) {
 	DrawLines(pdf, VERTICAL, &Line{
-		BoldWidth: data.BoldWidth,
-		Width: data.Width,
+		BoldWidth:  data.BoldWidth,
+		Width:      data.Width,
 		InitMargin: data.VerticalMargin,
 		LineMargin: data.HorizontalMargin,
-		Max: data.MaxWidth,
-		LineMax: data.maxHeight,
+		Max:        data.MaxWidth,
+		LineMax:    data.maxHeight,
 	})
 }
 
 func DrawHorizontalLines(pdf *gofpdf.Fpdf, data *LineCalc) {
 	DrawLines(pdf, HORIZONTAL, &Line{
-		BoldWidth: data.BoldWidth,
-		Width: data.Width,
+		BoldWidth:  data.BoldWidth,
+		Width:      data.Width,
 		InitMargin: data.HorizontalMargin,
 		LineMargin: data.VerticalMargin,
-		Max: data.maxHeight,
-		LineMax: data.MaxWidth,
+		Max:        data.maxHeight,
+		LineMax:    data.MaxWidth,
 	})
 }
 
@@ -128,14 +128,14 @@ func DrawLines(pdf *gofpdf.Fpdf, lineType int, data *Line) error {
 }
 
 func CalculateMargin(width, total, margin float64) (float64, error) {
-	rest := math.Mod(total - (2 * margin), width)
+	rest := math.Mod(total-(2*margin), width)
 
 	if rest == 0 {
 		return margin, nil
 	}
 
 	newMargin := margin + (rest / 2)
-	if rest = math.Mod(total - (2 * newMargin), width); rest == 0 {
+	if rest = math.Mod(total-(2*newMargin), width); rest == 0 {
 		return newMargin, nil
 	}
 
