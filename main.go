@@ -2,19 +2,23 @@ package main
 
 import (
 	"errors"
+	"flag"
 	"github.com/jung-kurt/gofpdf"
 	"math"
+	"strconv"
 )
 
+// 120 20mm, 140 18mm, 160 16mm, 180 14mm, 200 12mm
 const (
-	WIDTH             = 210
-	HEIGHT            = 297
-	MARGIN_VERTICAL   = 5.
-	MARGIN_HORIZONTAL = 8.
-	LINE_BOLD         = 0.5
-	LINE              = 0.2
-	VERTICAL          = iota
-	HORIZONTAL
+	Width            = 210
+	Height           = 297
+	MarginVertical   = 5.
+	MarginHorizontal = 8.
+	LineWidthBold    = 0.5
+	LineWidth        = 0.2
+	ConversionFactor = 32.
+	Vertical         = iota
+	Horizontal
 )
 
 type LineCalc struct {
@@ -36,8 +40,8 @@ type Line struct {
 }
 
 func main() {
-	boldWidth := 20.
-	width := 2.
+	filename, size := getFlags()
+	boldWidth, width, err := CalculateWidths(size)
 
 	pdf := gofpdf.New("P", "mm", "A4", "")
 	pdf.AddPage()
