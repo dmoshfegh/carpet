@@ -10,5 +10,4 @@ This small tool generates special squad paper PDFs for carpet sketching
 The type is not limited to some values but default usage is 100, 120, 140, 160, 180, 200
 
 ### Defaults
--filename carpet.pdf
--type 120
+`./main -filename carpet.pdf -type 120`
