@@ -55,8 +55,8 @@ func main() {
 		panic(err.Error())
 	}
 
-	DrawVerticalLines(pdf, data)
-	DrawHorizontalLines(pdf, data)
+	drawVerticalLines(pdf, data)
+	drawHorizontalLines(pdf, data)
 
 	err = pdf.OutputFileAndClose(*filename)
 
@@ -106,8 +106,7 @@ func CalculateLineData(boldWidth, width float64) (*LineCalc, error) {
 	}, nil
 }
 
-// DrawVerticalLines get the calculated stuff and draw all the vertical lines
-func DrawVerticalLines(pdf *gofpdf.Fpdf, data *LineCalc) {
+func drawVerticalLines(pdf *gofpdf.Fpdf, data *LineCalc) {
 	drawLines(pdf, Vertical, &Line{
 		BoldWidth:  data.BoldWidth,
 		Width:      data.Width,
@@ -118,8 +117,7 @@ func DrawVerticalLines(pdf *gofpdf.Fpdf, data *LineCalc) {
 	})
 }
 
-// DrawHorizontalLines get the calculated stuff and draw all the horizontal lines
-func DrawHorizontalLines(pdf *gofpdf.Fpdf, data *LineCalc) {
+func drawHorizontalLines(pdf *gofpdf.Fpdf, data *LineCalc) {
 	drawLines(pdf, Horizontal, &Line{
 		BoldWidth:  data.BoldWidth,
 		Width:      data.Width,
@@ -155,19 +153,22 @@ func drawLines(pdf *gofpdf.Fpdf, lineType int, data *Line) error {
 }
 
 func calculateMargin(width, total, margin float64) (float64, error) {
-	rest := math.Mod(total-(2*margin), width)
+	rest := calculateMarginRest(width, total, margin)
 
 	if rest == 0 {
 		return margin, nil
 	}
 
 	newMargin := margin + (rest / 2)
-
-	if rest = math.Mod(total-(2*newMargin), width); rest == 0 {
+	if rest = calculateMarginRest(width, total, newMargin); rest == 0 {
 		return newMargin, nil
 	}
 
 	return 0., errors.New("Invalid Margin")
+}
+
+func calculateMarginRest (width, total, margin float64) float64 {
+	return math.Mod(total-(2*margin), width)
 }
 
 func truncate(some float64) float64 {
